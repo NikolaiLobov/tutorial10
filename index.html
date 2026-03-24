@@ -2,98 +2,79 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>LINKR1 - Web Page Summary</title>
+    <title>LINKR1 - URL Injector</title>
     <style>
         body {
             background-color: #f9f9f9;
-            padding: 20px;
             font-family: "Courier New", monospace;
+            padding: 20px;
         }
         .container {
-            max-width: 500px;
+            max-width: 400px;
             margin: auto;
             background: #fff;
             padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        h2 {
-            text-align: center;
-            color: #333;
+            border: 1px solid #ccc;
         }
         input[type="text"] {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            margin-bottom: 15px;
+            padding: 8px;
+            margin-bottom: 10px;
+            font-family: "Courier New", monospace;
         }
         button {
-            width: 100%;
-            padding: 12px;
-            background: #007bff;
-            border: none;
-            color: white;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        button:hover {
-            background: #0056b3;
+            padding: 8px;
+            font-family: "Courier New", monospace;
         }
         .response {
-            margin-top: 20px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        .loading {
-            color: #007bff;
-            font-style: italic;
+            margin-top: 10px;
+            font-family: "Courier New", monospace;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>LINKR1 - Web Page Summary</h2>
-        <input type="text" placeholder="Enter URL to HTML file here..." id="urlInput" />
+        <h2>Inject Any URL</h2>
+        <input type="text" id="urlInput" placeholder="Enter URL here..." />
         <button onclick="submitUrl()">Submit</button>
         <div class="response" id="response"></div>
     </div>
-</body>
-</html>
-<script>
-    async function submitUrl() {
-        const urlInput = document.getElementById("urlInput");
-        const responseDiv = document.getElementById("response");
-        const apiEndpoint = "https://api.example.com/llm"; // Replace with your actual API endpoint
+    <script>
+        async function submitUrl() {
+            const urlInput = document.getElementById("urlInput");
+            const responseDiv = document.getElementById("response");
+            const apiEndpoint = "https://api.example.com/llm"; // Replace with your target API
 
-        if (urlInput.value.trim() === "") {
-            responseDiv.textContent = "Please enter a valid URL.";
-            return;
-        }
-
-        try {
-            const fullUrl = urlInput.value.trim();
-            const formattedResponse = `GET: ${fullUrl}`;
-            responseDiv.textContent = formattedResponse;
-            const response = await fetch(apiEndpoint, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json"
-                },
-                body: JSON.stringify({ url: fullUrl })
-            });
-
-            if (!response.ok) {
-                throw new Error(`API Error: ${response.status}`);
+            if (urlInput.value.trim() === "") {
+                responseDiv.textContent = "Please enter a valid URL.";
+                return;
             }
 
-            const data = await response.json();
-            responseDiv.textContent += `\n${data.summary || 'No summary received.'}`;
-        } catch (error) {
-            responseDiv.textContent = `Error: ${error.message}`;
+            try {
+                const fullUrl = urlInput.value.trim();
+                const formattedResponse = `GET: ${fullUrl}`;
+                responseDiv.textContent = formattedResponse;
+
+                const response = await fetch(apiEndpoint, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    body: JSON.stringify({ url: fullUrl })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                responseDiv.textContent += `\n${data.summary || 'No data received.'}`;
+            } catch (error) {
+                responseDiv.textContent = `Error: ${error.message}`;
+            }
         }
-    }
-</script>
+    </script>
+</body>
+</html>
